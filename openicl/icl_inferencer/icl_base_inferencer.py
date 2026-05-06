@@ -141,8 +141,11 @@ class BaseInferencer:
                 self.tokenizer = tokenizer_name
             else:
                 self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
-        self.tokenizer.pad_token = self.tokenizer.eos_token
-        self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+
+        if self.tokenizer.eos_token is not None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+        if self.tokenizer.eos_token_id is not None:
+            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
         self.tokenizer.padding_side = "left"
 
     def __init_api(self, **kwargs):

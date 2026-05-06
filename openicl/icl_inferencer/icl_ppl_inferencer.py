@@ -183,8 +183,9 @@ class PPLInferencer(BaseInferencer):
                     mask[i][j] = 1
             loss = loss * mask
 
-        lens = (inputs["input_ids"] != self.tokenizer.pad_token_id).sum(-1).cpu().numpy()
+        lens = (inputs["input_ids"] != self.tokenizer.pad_token_id).sum(-1)
         if mask_length is not None:
-            lens -= np.array(mask_length)
-        ce_loss = loss.sum(-1).cpu().detach().numpy() / lens
+            lens -= torch.tensor(mask_length, device=lens.device, dtype=lens.dtype)
+        # Some new hf models are bfloat16
+        ce_loss = (loss.sum(-1) / lens.to(loss.dtype)).detach().to(torch.float32).cpu()
         return ce_loss

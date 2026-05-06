@@ -62,8 +62,10 @@ class TopkRetriever(BaseRetriever):
         gen_datalist = self.dataset_reader.generate_input_field_corpus(self.test_ds)
 
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
-        self.tokenizer.pad_token = self.tokenizer.eos_token
-        self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+        if self.tokenizer.eos_token is not None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+        if self.tokenizer.eos_token_id is not None:
+            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
         self.tokenizer.padding_side = "right"
 
         self.encode_dataset = DatasetEncoder(gen_datalist, tokenizer=self.tokenizer)

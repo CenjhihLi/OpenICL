@@ -62,6 +62,9 @@ class DataCollatorWithPaddingAndCuda:
         batch.update(res_dict)
 
         if self.device:
-            batch = batch.to(self.device)
+            batch = {
+                k: v.to(self.device) if hasattr(v, "to") else v
+                for k, v in batch.items()
+            }
 
         return batch

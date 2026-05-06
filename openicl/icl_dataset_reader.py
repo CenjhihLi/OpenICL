@@ -225,8 +225,10 @@ class DatasetEncoder(torch.utils.data.Dataset):
             self.tokenizer = tokenizer
         else:
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.tokenizer.pad_token = self.tokenizer.eos_token
-            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+            if self.tokenizer.eos_token is not None:
+                self.tokenizer.pad_token = self.tokenizer.eos_token
+            if self.tokenizer.eos_token_id is not None:
+                self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
             self.tokenizer.padding_side = "left"
         self.encode_dataset = []
         self.init_dataset()
@@ -234,7 +236,10 @@ class DatasetEncoder(torch.utils.data.Dataset):
 
     def init_dataset(self):
         for idx, data in enumerate(self.datalist):
-            tokenized_data = self.tokenizer.encode_plus(data, truncation=True, return_tensors='pt', verbose=False)
+            try:
+                tokenized_data = self.tokenizer(data, truncation=True, return_tensors='pt', verbose=False)
+            except:
+                tokenized_data = self.tokenizer.encode_plus(data, truncation=True, return_tensors='pt', verbose=False)
             self.encode_dataset.append({
                 'input_ids': tokenized_data.input_ids[0],
                 'attention_mask': tokenized_data.attention_mask[0],
