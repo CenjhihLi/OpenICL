@@ -187,5 +187,5 @@ class PPLInferencer(BaseInferencer):
         if mask_length is not None:
             lens -= torch.tensor(mask_length, device=lens.device, dtype=lens.dtype)
         # Some new hf models are bfloat16
-        ce_loss = (loss.sum(-1) / lens.to(loss.dtype)).detach().to(torch.float32).cpu()
+        ce_loss = (loss.sum(-1) / lens.to(loss.dtype)).detach().to(torch.float32).cpu().numpy()
         return ce_loss

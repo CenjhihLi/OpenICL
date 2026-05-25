@@ -238,7 +238,7 @@ class DatasetEncoder(torch.utils.data.Dataset):
         for idx, data in enumerate(self.datalist):
             try:
                 tokenized_data = self.tokenizer(data, truncation=True, return_tensors='pt', verbose=False)
-            except:
+            except (TypeError, AttributeError):
                 tokenized_data = self.tokenizer.encode_plus(data, truncation=True, return_tensors='pt', verbose=False)
             self.encode_dataset.append({
                 'input_ids': tokenized_data.input_ids[0],
